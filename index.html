@@ -81,20 +81,28 @@
 
     let score = 0;
     let gameActive = false;
+    let messageShown = false; // éviter de répéter le message
 
-    // Zoom classique
+    // Gestion des clics
     img.addEventListener("click", () => {
       if (!gameActive) {
         img.classList.toggle("zoom");
       } else {
         score++;
         scoreText.textContent = "Score : " + score;
+
+        // Message spécial quand on atteint 100
+        if (score >= 100 && !messageShown) {
+          alert("🎉 Bravo ! Tu as perdu ton temps… mais clique encore plus !");
+          messageShown = true; 
+        }
       }
     });
 
     // Lancer le jeu
     function startGame() {
       score = 0;
+      messageShown = false;
       gameActive = true;
       scoreText.textContent = "Score : 0";
       alert("Clique sur le chat pour gagner des points !");
@@ -107,3 +115,4 @@
   </script>
 </body>
 </html>
+
