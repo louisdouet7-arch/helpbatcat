@@ -15,7 +15,6 @@
       justify-content: center;
       min-height: 100vh;
       margin: 0;
-      transition: background 0.3s, color 0.3s;
     }
     h1 {
       margin-bottom: 10px;
@@ -71,13 +70,14 @@
   <h1>🐱 Bienvenue sur HelpBatCat</h1>
   <p id="score">Score : 0</p>
   <p id="hint">💡 Atteins 50 points pour débloquer une surprise !</p>
+
   <img id="mainImage" 
        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST-FhqYiimlUVGs65YV46QbXpM64_M8ZeOm_O1mBUrftBLhgMxyvoAIKIxc-4Vn5bB0b0&usqp=CAU" 
        alt="Image HelpBatCat">
   
   <div class="buttons">
-    <button onclick="startGame()">🎮 Jouer</button>
-    <button onclick="toggleTheme()">Mode Sombre/Clair</button>
+    <button id="playBtn">🎮 Jouer</button>
+    <button id="themeBtn">Mode Sombre/Clair</button>
   </div>
 
   <script>
@@ -85,19 +85,18 @@
     const body = document.body;
     const scoreText = document.getElementById("score");
     const hint = document.getElementById("hint");
+    const playBtn = document.getElementById("playBtn");
+    const themeBtn = document.getElementById("themeBtn");
 
     let score = 0;
     let gameActive = false;
 
-    // Zoom classique ou clic pour le jeu
+    // Clic sur l'image
     img.addEventListener("click", () => {
       if (!gameActive) {
-        img.classList.toggle("zoom");
+        img.classList.toggle("zoom"); // Zoom normal si pas en jeu
       } else {
         score++;
         scoreText.textContent = "Score : " + score;
 
-        // Surprise à 50
-        if (score === 50) {
-          alert("🎉 BRAVO ! Tu as atteint 50 points 😼 Tu as perdu ton temps... mais clique encore plus !");
-          hint.textContent = "🔥 Tu as déjà trouvé la surprise !
+        if (score
