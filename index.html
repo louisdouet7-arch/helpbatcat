@@ -5,23 +5,93 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HelpBatCat</title>
   <style>
-    html, body {
-      height: 100%;
-      margin: 0;
+    body {
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      background-color: #111;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      transition: background 0.3s, color 0.3s;
+    }
+    h1 {
+      margin-bottom: 20px;
     }
     img {
-      max-width: 95%;
-      max-height: 95%;
+      max-width: 90%;
+      max-height: 60vh;
       border-radius: 8px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      transition: transform 0.3s ease;
+      cursor: zoom-in;
+    }
+    img.zoom {
+      transform: scale(1.5);
+      cursor: zoom-out;
+    }
+    .buttons {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      background: #ff9800;
+      color: #111;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #ffa733;
+    }
+    .light {
+      background: #f9f9f9;
+      color: #111;
+    }
+    .light img {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
     }
   </style>
 </head>
 <body>
-  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST-FhqYiimlUVGs65YV46QbXpM64_M8ZeOm_O1mBUrftBLhgMxyvoAIKIxc-4Vn5bB0b0&usqp=CAU" alt="Image HelpBatCat">
+  <h1>🐱 Bienvenue sur HelpBatCat</h1>
+  <img id="mainImage" 
+       src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST-FhqYiimlUVGs65YV46QbXpM64_M8ZeOm_O1mBUrftBLhgMxyvoAIKIxc-4Vn5bB0b0&usqp=CAU" 
+       alt="Image HelpBatCat">
+  
+  <div class="buttons">
+    <button onclick="changeImage()">Changer l’image</button>
+    <button onclick="toggleTheme()">Mode Sombre/Clair</button>
+  </div>
+
+  <script>
+    const img = document.getElementById("mainImage");
+    const body = document.body;
+
+    // Zoom au clic
+    img.addEventListener("click", () => {
+      img.classList.toggle("zoom");
+    });
+
+    // Changer l’image
+    function changeImage() {
+      if (img.src.includes("encrypted-tbn0")) {
+        img.src = "https://placekitten.com/400/300"; // autre image
+      } else {
+        img.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST-FhqYiimlUVGs65YV46QbXpM64_M8ZeOm_O1mBUrftBLhgMxyvoAIKIxc-4Vn5bB0b0&usqp=CAU";
+      }
+    }
+
+    // Basculer en mode sombre/clair
+    function toggleTheme() {
+      body.classList.toggle("light");
+    }
+  </script>
 </body>
 </html>
