@@ -48,6 +48,13 @@
       color: red;
       margin-top: 30px;
     }
+    #superClickBtn {
+      background-color: #ff9800;
+      display: none; /* Caché au début */
+    }
+    #superClickBtn:hover {
+      background-color: #e68900;
+    }
   </style>
 </head>
 <body>
@@ -62,6 +69,7 @@
   <div id="game" style="display: none;">
     <p id="score">Score : 0</p>
     <button id="clickBtn">Clique pour gagner des points</button>
+    <button id="superClickBtn">⚡ Super Clic (x10)</button>
     <p id="message"></p>
     <p id="cheat"></p>
   </div>
@@ -75,6 +83,7 @@
     const gameDiv = document.getElementById("game");
     const scoreTxt = document.getElementById("score");
     const clickBtn = document.getElementById("clickBtn");
+    const superClickBtn = document.getElementById("superClickBtn");
     const message = document.getElementById("message");
     const cheatMsg = document.getElementById("cheat");
 
@@ -84,30 +93,14 @@
       gameDiv.style.display = "block";
     });
 
-    // Quand on clique sur le bouton du jeu
-    clickBtn.addEventListener("click", () => {
-      if (cheatDetected) return; // empêche de cliquer si triche détectée
+    // Fonction pour mettre à jour le score et vérifier les bonus
+    function updateScore(amount) {
+      if (cheatDetected) return;
 
       let now = Date.now();
       let delta = now - lastClickTime;
 
-      if (delta < 200 && lastClickTime !== 0) { 
-        // Moins de 200 ms entre deux clics → triche
+      if (amount === 1 && delta < 200 && lastClickTime !== 0) { 
+        // Vérification anti-autoclick UNIQUEMENT sur le clic normal
         cheatDetected = true;
-        cheatMsg.textContent = "🚨 TRICHEUR ! Tu ne peux plus cliquer 😼";
-        clickBtn.disabled = true; // désactive le bouton
-        return;
-      }
-
-      lastClickTime = now;
-      score++;
-      scoreTxt.textContent = "Score : " + score;
-
-      if (score === 50) {
-        message.textContent = "🎉 Bravo ! Tu as perdu ton temps... mais clique encore plus 😹";
-      }
-    });
-  </script>
-
-</body>
-</html>
+        cheatMsg.textContent = "🚨 TRICHEUR ! Tu ne peu
