@@ -18,7 +18,11 @@
       transition: background 0.3s, color 0.3s;
     }
     h1 {
+      margin-bottom: 10px;
+    }
+    #score {
       margin-bottom: 20px;
+      font-size: 1.2em;
     }
     img {
       max-width: 90%;
@@ -26,11 +30,10 @@
       border-radius: 8px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.6);
       transition: transform 0.3s ease;
-      cursor: zoom-in;
+      cursor: pointer;
     }
     img.zoom {
       transform: scale(1.5);
-      cursor: zoom-out;
     }
     .buttons {
       margin-top: 20px;
@@ -61,31 +64,40 @@
 </head>
 <body>
   <h1>🐱 Bienvenue sur HelpBatCat</h1>
+  <p id="score">Score : 0</p>
   <img id="mainImage" 
        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST-FhqYiimlUVGs65YV46QbXpM64_M8ZeOm_O1mBUrftBLhgMxyvoAIKIxc-4Vn5bB0b0&usqp=CAU" 
        alt="Image HelpBatCat">
   
   <div class="buttons">
-    <button onclick="changeImage()">Changer l’image</button>
+    <button onclick="startGame()">🎮 Jouer</button>
     <button onclick="toggleTheme()">Mode Sombre/Clair</button>
   </div>
 
   <script>
     const img = document.getElementById("mainImage");
     const body = document.body;
+    const scoreText = document.getElementById("score");
 
-    // Zoom au clic
+    let score = 0;
+    let gameActive = false;
+
+    // Zoom classique
     img.addEventListener("click", () => {
-      img.classList.toggle("zoom");
+      if (!gameActive) {
+        img.classList.toggle("zoom");
+      } else {
+        score++;
+        scoreText.textContent = "Score : " + score;
+      }
     });
 
-    // Changer l’image
-    function changeImage() {
-      if (img.src.includes("encrypted-tbn0")) {
-        img.src = "https://placekitten.com/400/300"; // autre image
-      } else {
-        img.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST-FhqYiimlUVGs65YV46QbXpM64_M8ZeOm_O1mBUrftBLhgMxyvoAIKIxc-4Vn5bB0b0&usqp=CAU";
-      }
+    // Lancer le jeu
+    function startGame() {
+      score = 0;
+      gameActive = true;
+      scoreText.textContent = "Score : 0";
+      alert("Clique sur le chat pour gagner des points !");
     }
 
     // Basculer en mode sombre/clair
