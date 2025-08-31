@@ -3,104 +3,113 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Help Batcat</title>
+  <title>Help BatCat</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      background-color: #111;
-      color: white;
-      margin: 0;
+      background-color: #f4f4f4;
       padding: 20px;
     }
-    img {
-      max-width: 300px;
-      border-radius: 10px;
+    h1 {
+      color: #333;
+    }
+    #cat-img {
+      width: 250px;
       margin: 20px 0;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
     }
-    button {
-      padding: 10px 20px;
-      margin: 10px;
-      border: none;
-      border-radius: 5px;
+    .btn {
+      padding: 12px 20px;
       font-size: 18px;
+      margin: 10px;
       cursor: pointer;
-      background-color: #4CAF50;
+      border: none;
+      border-radius: 8px;
+      background-color: #007bff;
       color: white;
-      transition: 0.3s;
+      transition: transform 0.2s, background 0.3s;
     }
-    button:hover {
-      background-color: #45a049;
+    .btn:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
     }
     #score {
       font-size: 24px;
-      margin: 20px;
+      margin: 20px 0;
     }
-    #message {
-      font-size: 22px;
+    #message, #cheatMsg {
+      margin-top: 15px;
+      font-size: 20px;
       font-weight: bold;
-      color: gold;
-      margin-top: 20px;
     }
-    #cheat {
-      font-size: 26px;
-      font-weight: bold;
+    #cheatMsg {
       color: red;
-      margin-top: 30px;
     }
     #superClickBtn {
-      background-color: #ff9800;
-      display: none; /* Caché au début */
+      display: none; /* Caché au départ */
+      background-color: #28a745;
     }
     #superClickBtn:hover {
-      background-color: #e68900;
+      background-color: #1e7e34;
     }
   </style>
 </head>
 <body>
-
-  <h1>😺 Help Batcat</h1>
-  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST-FhqYiimlUVGs65YV46QbXpM64_M8ZeOm_O1mBUrftBLhgMxyvoAIKIxc-4Vn5bB0b0&usqp=CAU" alt="Batcat">
-
-  <div>
-    <button id="playBtn">🎮 Jouer</button>
-  </div>
-
-  <div id="game" style="display: none;">
-    <p id="score">Score : 0</p>
-    <button id="clickBtn">Clique pour gagner des points</button>
-    <button id="superClickBtn">⚡ Super Clic (x10)</button>
-    <p id="message"></p>
-    <p id="cheat"></p>
-  </div>
+  <h1>😼 Help BatCat 😼</h1>
+  <img id="cat-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST-FhqYiimlUVGs65YV46QbXpM64_M8ZeOm_O1mBUrftBLhgMxyvoAIKIxc-4Vn5bB0b0&usqp=CAU" alt="Chat mignon">
+  
+  <p id="score">Score : 0</p>
+  <button id="clickBtn" class="btn">Jouer (+1)</button>
+  <button id="superClickBtn" class="btn">Super Click (+10)</button>
+  
+  <p id="message"></p>
+  <p id="cheatMsg"></p>
 
   <script>
     let score = 0;
     let lastClickTime = 0;
     let cheatDetected = false;
 
-    const playBtn = document.getElementById("playBtn");
-    const gameDiv = document.getElementById("game");
-    const scoreTxt = document.getElementById("score");
+    const scoreDisplay = document.getElementById("score");
+    const message = document.getElementById("message");
+    const cheatMsg = document.getElementById("cheatMsg");
     const clickBtn = document.getElementById("clickBtn");
     const superClickBtn = document.getElementById("superClickBtn");
-    const message = document.getElementById("message");
-    const cheatMsg = document.getElementById("cheat");
 
-    // Quand on clique sur "Jouer"
-    playBtn.addEventListener("click", () => {
-      playBtn.style.display = "none";
-      gameDiv.style.display = "block";
-    });
-
-    // Fonction pour mettre à jour le score et vérifier les bonus
     function updateScore(amount) {
       if (cheatDetected) return;
 
       let now = Date.now();
       let delta = now - lastClickTime;
 
-      if (amount === 1 && delta < 200 && lastClickTime !== 0) { 
-        // Vérification anti-autoclick UNIQUEMENT sur le clic normal
+      // Anti auto-click SEULEMENT sur le bouton +1
+      if (amount === 1 && delta < 120 && lastClickTime !== 0) { 
         cheatDetected = true;
-        cheatMsg.textContent = "🚨 TRICHEUR ! Tu ne peu
+        cheatMsg.textContent = "🚨 TRICHEUR ! Tu ne peux plus cliquer 😼";
+        clickBtn.disabled = true;
+        superClickBtn.disabled = true;
+        return;
+      }
+
+      lastClickTime = now;
+      score += amount;
+      scoreDisplay.textContent = "Score : " + score;
+
+      // Messages spéciaux
+      if (score === 50) {
+        message.textContent = "🎉 Bravo ! À 1000 points il y a une surprise... 😼";
+      }
+
+      if (score >= 1000 && superClickBtn.style.display === "none") {
+        message.textContent = "🚀 Nouveau bouton débloqué : Super Click (+10) !";
+        superClickBtn.style.display = "inline-block";
+      }
+    }
+
+    clickBtn.addEventListener("click", () => updateScore(1));
+    superClickBtn.addEventListener("click", () => updateScore(10));
+  </script>
+</body>
+</html>
