@@ -100,7 +100,7 @@
       let delta = now - lastClickTime;
 
       // anti auto-click seulement sur +1
-      if (amount === 1 && delta < 120 && lastClickTime !== 0) {
+      if (amount === 1 && delta < 200 && lastClickTime !== 0) {
         cheatDetected = true;
         cheatMsg.textContent = "🚨 TRICHEUR ! Tu ne peux plus cliquer 😼";
         clickBtn.disabled = true;
