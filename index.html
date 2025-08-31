@@ -3,100 +3,87 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HelpBatCat</title>
+  <title>Help Batcat</title>
   <style>
     body {
-      background: #111;
-      color: white;
       font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
+      text-align: center;
+      background-color: #111;
+      color: white;
       margin: 0;
-    }
-    h1 {
-      margin-bottom: 10px;
-    }
-    #score {
-      margin-bottom: 10px;
-      font-size: 1.2em;
-    }
-    #hint {
-      font-size: 0.9em;
-      margin-bottom: 20px;
-      color: #ff9800;
+      padding: 20px;
     }
     img {
-      max-width: 90%;
-      max-height: 60vh;
-      border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-      transition: transform 0.3s ease;
-      cursor: pointer;
-    }
-    img.zoom {
-      transform: scale(1.5);
-    }
-    .buttons {
-      margin-top: 20px;
-      display: flex;
-      gap: 10px;
+      max-width: 300px;
+      border-radius: 10px;
+      margin: 20px 0;
     }
     button {
       padding: 10px 20px;
+      margin: 10px;
       border: none;
-      border-radius: 6px;
-      background: #ff9800;
-      color: #111;
-      font-weight: bold;
+      border-radius: 5px;
+      font-size: 18px;
       cursor: pointer;
-      transition: background 0.3s;
+      background-color: #4CAF50;
+      color: white;
+      transition: 0.3s;
     }
     button:hover {
-      background: #ffa733;
+      background-color: #45a049;
     }
-    .light {
-      background: #f9f9f9;
-      color: #111;
+    #score {
+      font-size: 24px;
+      margin: 20px;
     }
-    .light img {
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    #message {
+      font-size: 22px;
+      font-weight: bold;
+      color: gold;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <h1>🐱 Bienvenue sur HelpBatCat</h1>
-  <p id="score">Score : 0</p>
-  <p id="hint">💡 Atteins 50 points pour débloquer une surprise !</p>
 
-  <img id="mainImage" 
-       src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST-FhqYiimlUVGs65YV46QbXpM64_M8ZeOm_O1mBUrftBLhgMxyvoAIKIxc-4Vn5bB0b0&usqp=CAU" 
-       alt="Image HelpBatCat">
-  
-  <div class="buttons">
+  <h1>😺 Help Batcat</h1>
+  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST-FhqYiimlUVGs65YV46QbXpM64_M8ZeOm_O1mBUrftBLhgMxyvoAIKIxc-4Vn5bB0b0&usqp=CAU" alt="Batcat">
+
+  <div>
     <button id="playBtn">🎮 Jouer</button>
-    <button id="themeBtn">Mode Sombre/Clair</button>
+  </div>
+
+  <div id="game" style="display: none;">
+    <p id="score">Score : 0</p>
+    <button id="clickBtn">Clique pour gagner des points</button>
+    <p id="message"></p>
   </div>
 
   <script>
-    const img = document.getElementById("mainImage");
-    const body = document.body;
-    const scoreText = document.getElementById("score");
-    const hint = document.getElementById("hint");
-    const playBtn = document.getElementById("playBtn");
-    const themeBtn = document.getElementById("themeBtn");
-
     let score = 0;
-    let gameActive = false;
 
-    // Clic sur l'image
-    img.addEventListener("click", () => {
-      if (!gameActive) {
-        img.classList.toggle("zoom"); // Zoom normal si pas en jeu
-      } else {
-        score++;
-        scoreText.textContent = "Score : " + score;
+    const playBtn = document.getElementById("playBtn");
+    const gameDiv = document.getElementById("game");
+    const scoreTxt = document.getElementById("score");
+    const clickBtn = document.getElementById("clickBtn");
+    const message = document.getElementById("message");
 
-        if (score
+    // Quand on clique sur "Jouer"
+    playBtn.addEventListener("click", () => {
+      playBtn.style.display = "none";
+      gameDiv.style.display = "block";
+    });
+
+    // Quand on clique sur le bouton du jeu
+    clickBtn.addEventListener("click", () => {
+      score++;
+      scoreTxt.textContent = "Score : " + score;
+
+      if (score === 50) {
+        message.textContent = "🎉 Bravo ! Tu as perdu ton temps... mais clique encore plus 😹";
+      }
+    });
+  </script>
+
+</body>
+</html>
