@@ -9,10 +9,16 @@
       font-family: Arial, sans-serif;
       text-align: center;
       background-color: #f4f4f4;
+      color: #333;
       padding: 20px;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark {
+      background-color: #1e1e1e;
+      color: #f4f4f4;
     }
     h1 {
-      color: #333;
+      margin-bottom: 10px;
     }
     #cat-img {
       width: 250px;
@@ -35,11 +41,18 @@
       background-color: #0056b3;
       transform: scale(1.05);
     }
+    #superClickBtn {
+      display: none;
+      background-color: #28a745;
+    }
+    #superClickBtn:hover {
+      background-color: #1e7e34;
+    }
     #score {
       font-size: 24px;
       margin: 20px 0;
     }
-    #message, #cheatMsg {
+    #message, #cheatMsg, #introMsg {
       margin-top: 15px;
       font-size: 20px;
       font-weight: bold;
@@ -47,23 +60,24 @@
     #cheatMsg {
       color: red;
     }
-    #superClickBtn {
-      display: none; /* Caché au départ */
-      background-color: #28a745;
+    #modeBtn {
+      background-color: #6c757d;
     }
-    #superClickBtn:hover {
-      background-color: #1e7e34;
+    #modeBtn:hover {
+      background-color: #5a6268;
     }
   </style>
 </head>
 <body>
-  <h1>😼 Help BatCat 😼</h1>
+  <h1>😼 BatCat 😼</h1>
+  <p id="introMsg">⚡ À 1000 points il y a une surprise... 😼</p>
   <img id="cat-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST-FhqYiimlUVGs65YV46QbXpM64_M8ZeOm_O1mBUrftBLhgMxyvoAIKIxc-4Vn5bB0b0&usqp=CAU" alt="Chat mignon">
   
   <p id="score">Score : 0</p>
   <button id="clickBtn" class="btn">Jouer (+1)</button>
   <button id="superClickBtn" class="btn">Super Click (+10)</button>
-  
+  <button id="modeBtn" class="btn">🌙 Mode sombre</button>
+
   <p id="message"></p>
   <p id="cheatMsg"></p>
 
@@ -77,6 +91,7 @@
     const cheatMsg = document.getElementById("cheatMsg");
     const clickBtn = document.getElementById("clickBtn");
     const superClickBtn = document.getElementById("superClickBtn");
+    const modeBtn = document.getElementById("modeBtn");
 
     function updateScore(amount) {
       if (cheatDetected) return;
@@ -84,8 +99,8 @@
       let now = Date.now();
       let delta = now - lastClickTime;
 
-      // Anti auto-click SEULEMENT sur le bouton +1
-      if (amount === 1 && delta < 120 && lastClickTime !== 0) { 
+      // anti auto-click seulement sur +1
+      if (amount === 1 && delta < 120 && lastClickTime !== 0) {
         cheatDetected = true;
         cheatMsg.textContent = "🚨 TRICHEUR ! Tu ne peux plus cliquer 😼";
         clickBtn.disabled = true;
@@ -97,9 +112,8 @@
       score += amount;
       scoreDisplay.textContent = "Score : " + score;
 
-      // Messages spéciaux
       if (score === 50) {
-        message.textContent = "🎉 Bravo ! À 1000 points il y a une surprise... 😼";
+        message.textContent = "😼 Bravo, tu as perdu ton temps ! mais continue";
       }
 
       if (score >= 1000 && superClickBtn.style.display === "none") {
@@ -110,6 +124,16 @@
 
     clickBtn.addEventListener("click", () => updateScore(1));
     superClickBtn.addEventListener("click", () => updateScore(10));
+
+    // Mode sombre
+    modeBtn.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      if (document.body.classList.contains("dark")) {
+        modeBtn.textContent = "☀️ Mode clair";
+      } else {
+        modeBtn.textContent = "🌙 Mode sombre";
+      }
+    });
   </script>
 </body>
 </html>
