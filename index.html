@@ -2,107 +2,116 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Help Batcat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jeu du Chat</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
+      background-color: white;
+      color: black;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    body.dark {
       background-color: #121212;
-      color: #ffffff;
-      margin: 0;
-      padding: 20px;
-    }
-    #catImage, #rewardImage {
-      max-width: 300px;
-      margin: 20px;
-    }
-    button {
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background-color: #ff9800;
       color: white;
     }
-    button:disabled {
-      background-color: #555;
-      cursor: not-allowed;
+    #catImage, #hiddenImage {
+      width: 200px;
+      margin: 20px;
     }
-    #score {
-      font-size: 22px;
-      margin-top: 20px;
+    #hiddenImage {
+      display: none;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
     }
     #message {
-      font-size: 18px;
-      margin-top: 15px;
-      color: #4caf50;
+      margin-top: 20px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <h1>🐱 Help Batcat</h1>
-  <p id="intro">⚡ Astuce : à 1000 points, il y a une surprise !</p>
+  <h1>Bienvenue sur le jeu du Chat 🐱</h1>
+  <p>(Astuce : à 1000 points il y a une surprise 😼)</p>
+  <img id="catImage" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST-FhqYiimlUVGs65YV46QbXpM64_M8ZeOm_O1mBUrftBLhgMxyvoAIKIxc-4Vn5bB0b0&usqp=CAU" alt="Chat">
+  <img id="hiddenImage" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/320px-Cat03.jpg" alt="Chat secret">
 
-  <!-- Image principale -->
-  <img id="catImage" src="chat.png" alt="Chat mignon">
+  <p>Score : <span id="score">0</span></p>
+  <p id="personalScore">Score personnel : 0</p>
 
-  <!-- Image spéciale (cachée au début) -->
-  <img id="rewardImage" src="reward.png" alt="Surprise" style="display:none;">
-
-  <p id="score">Score : 0</p>
-  <button id="playBtn">Jouer (+1)</button>
+  <button id="playBtn">Jouer</button>
   <button id="superBtn" style="display:none;">Super Click (+10)</button>
+  <button id="darkModeBtn">Mode sombre 🌙</button>
 
   <p id="message"></p>
 
   <script>
     let score = 0;
-    let lastClickTime = 0;
-    const minDelay = 150; // 🔧 sensibilité anti-autoclick (ms)
+    let lastClick = 0;
+    let cheating = false;
 
-    const scoreEl = document.getElementById("score");
-    const messageEl = document.getElementById("message");
+    // Récupération du score personnel depuis localStorage
+    let personalScore = parseInt(localStorage.getItem("personalScore")) || 0;
+    const personalScoreDisplay = document.getElementById("personalScore");
+    personalScoreDisplay.textContent = "Score personnel : " + personalScore;
+
+    const scoreDisplay = document.getElementById("score");
+    const message = document.getElementById("message");
     const playBtn = document.getElementById("playBtn");
     const superBtn = document.getElementById("superBtn");
-    const rewardImage = document.getElementById("rewardImage");
+    const darkModeBtn = document.getElementById("darkModeBtn");
+    const hiddenImage = document.getElementById("hiddenImage");
 
-    function updateScore(points) {
-      const now = Date.now();
+    function updatePersonalScore(points) {
+      personalScore += points;
+      personalScoreDisplay.textContent = "Score personnel : " + personalScore;
+      localStorage.setItem("personalScore", personalScore);
+    }
 
-      // Anti-auto click
-      if (now - lastClickTime < minDelay) {
-        messageEl.textContent = "🚨 Tricheur détecté !";
+    function addScore(points) {
+      if (cheating) return;
+
+      let now = Date.now();
+      if (now - lastClick < 120) { // Anti auto-clic
+        cheating = true;
+        message.textContent = "🚨 Tricheur détecté ! Les boutons sont désactivés.";
         playBtn.disabled = true;
         superBtn.disabled = true;
         return;
       }
-      lastClickTime = now;
+      lastClick = now;
 
       score += points;
-      scoreEl.textContent = "Score : " + score;
+      scoreDisplay.textContent = score;
 
-      // À 50 points
+      updatePersonalScore(points); // Mise à jour du score personnel
+
       if (score === 50) {
-        messageEl.textContent = "🎉 Bravo, tu as perdu ton temps ! 😹 Clique encore !";
+        message.textContent = "🎉 Tu as perdu ton temps bravo !";
       }
-
-      // À 500 points → affiche reward.png
       if (score === 500) {
-        rewardImage.style.display = "block";
-        messageEl.textContent = "🔥 Waouh ! Tu as débloqué une image secrète !";
+        hiddenImage.style.display = "block";
+        message.textContent = "😺 Une nouvelle image est apparue !";
       }
-
-      // À 1000 points → débloque le Super Click
       if (score === 1000) {
         superBtn.style.display = "inline-block";
-        messageEl.textContent = "💥 Surprise ! Tu débloques le Super Click (+10) !";
+        message.textContent = "🔥 Bravo ! Tu as débloqué le Super Click !";
       }
     }
 
-    playBtn.addEventListener("click", () => updateScore(1));
-    superBtn.addEventListener("click", () => updateScore(10));
+    playBtn.addEventListener("click", () => addScore(1));
+    superBtn.addEventListener("click", () => addScore(10));
+
+    darkModeBtn.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+    });
   </script>
 </body>
 </html>
