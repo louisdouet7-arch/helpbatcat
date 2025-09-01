@@ -2,90 +2,85 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jeu du Chat</title>
+  <title>Click Game Chat 🐱</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      background-color: white;
-      color: black;
+      padding: 20px;
+      background-color: #f4f4f4;
+      color: #333;
       transition: background 0.3s, color 0.3s;
     }
-    .dark-mode {
-      background-color: #121212;
-      color: white;
-    }
     img {
-      max-width: 300px;
+      max-width: 250px;
       margin: 20px 0;
     }
     button {
       margin: 10px;
       padding: 10px 20px;
-      font-size: 18px;
-      border-radius: 12px;
+      font-size: 16px;
+      border-radius: 8px;
       cursor: pointer;
     }
-    #superClick {
-      display: none;
-    }
-    #secretImage {
-      display: none;
-      margin-top: 20px;
-      max-width: 350px;
+    #superClick { display: none; }
+    #secretImage { display: none; }
+    .dark {
+      background-color: #222;
+      color: white;
     }
   </style>
 </head>
 <body>
-  <h1>🐱 Jeu du Chat 🐱</h1>
-  <p id="intro">Atteins 1000 points pour une surprise 🎁</p>
-  <img src="https://placekitten.com/300/200" alt="Chat mignon">
+  <h1>🐱 Jeu du Chat</h1>
+  <p id="intro">Atteins 1000 points pour une surprise 😼</p>
+
+  <!-- Image principale -->
+  <img src="chat.png" alt="Chat mignon" id="mainImage">
+
+  <!-- Score -->
   <p id="score">Score : 0</p>
   <p id="bestScore">Meilleur score : 0</p>
+
+  <!-- Boutons -->
   <button id="clickBtn">Jouer (+1)</button>
   <button id="superClick">Super Click (+10)</button>
   <button id="darkModeBtn">Mode Sombre</button>
+
+  <!-- Messages -->
   <p id="message"></p>
-  <img id="secretImage" src="https://louisdouet7-arch.github.io/helpbatcat/world-cat.png" alt="Le monde est un chat">
+
+  <!-- Image secrète (500 points) -->
+  <img id="secretImage" src="chat-secret.png" alt="Chat secret">
 
   <script>
     let score = 0;
     let bestScore = localStorage.getItem("bestScore") || 0;
-    let lastClickTime = 0;
-    const minInterval = 120; // anti-auto-click (120ms)
+    let lastClick = 0;
+    const minDelay = 150; // ← règle la sensibilité anti-autoclick
+
+    document.getElementById("bestScore").textContent = "Meilleur score : " + bestScore;
 
     const scoreDisplay = document.getElementById("score");
     const bestScoreDisplay = document.getElementById("bestScore");
     const message = document.getElementById("message");
-    const clickBtn = document.getElementById("clickBtn");
-    const superClickBtn = document.getElementById("superClick");
     const secretImage = document.getElementById("secretImage");
-    const darkModeBtn = document.getElementById("darkModeBtn");
+    const superClick = document.getElementById("superClick");
 
-    bestScoreDisplay.textContent = "Meilleur score : " + bestScore;
-
-    clickBtn.addEventListener("click", () => handleClick(1));
-    superClickBtn.addEventListener("click", () => handleClick(10));
-    darkModeBtn.addEventListener("click", toggleDarkMode);
-
-    function handleClick(points) {
+    function updateScore(points) {
       let now = Date.now();
-
-      // Détection auto-click
-      if (now - lastClickTime < minInterval) {
-        message.textContent = "🚨 Tricheur détecté !";
-        clickBtn.disabled = true;
-        superClickBtn.disabled = true;
+      if (now - lastClick < minDelay) {
+        message.textContent = "🚨 Triche détectée ! Boutons bloqués.";
+        document.getElementById("clickBtn").disabled = true;
+        superClick.disabled = true;
         return;
       }
-      lastClickTime = now;
+      lastClick = now;
 
-      // Ajout du score
       score += points;
       scoreDisplay.textContent = "Score : " + score;
 
-      // Vérifie et met à jour le meilleur score
+      // Meilleur score
       if (score > bestScore) {
         bestScore = score;
         localStorage.setItem("bestScore", bestScore);
@@ -94,21 +89,24 @@
 
       // Messages spéciaux
       if (score === 50) {
-        message.textContent = "🎉 Bravo, tu as perdu ton temps 😆 ! Clique encore plus...";
+        message.textContent = "🎉 Bravo ! Tu as perdu ton temps 😹";
       }
-      if (score === 500) {
+      if (score >= 500) {
         secretImage.style.display = "block";
-        message.textContent = "🐱 Le monde est un chat !";
       }
       if (score >= 1000) {
-        superClickBtn.style.display = "inline-block";
-        message.textContent = "🔥 Bravo ! Tu as débloqué le Super Click (+10) !";
+        superClick.style.display = "inline-block";
+        message.textContent = "🔥 Tu as débloqué le Super Click !";
       }
     }
 
-    function toggleDarkMode() {
-      document.body.classList.toggle("dark-mode");
-    }
+    document.getElementById("clickBtn").addEventListener("click", () => updateScore(1));
+    superClick.addEventListener("click", () => updateScore(10));
+
+    // Mode sombre
+    document.getElementById("darkModeBtn").addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+    });
   </script>
 </body>
 </html>
