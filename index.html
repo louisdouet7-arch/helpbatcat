@@ -3,137 +3,112 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Help BatCat</title>
+  <title>Jeu du Chat</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      background-color: #f4f4f4;
-      color: #333;
-      padding: 20px;
+      background-color: white;
+      color: black;
       transition: background 0.3s, color 0.3s;
     }
-    body.dark {
-      background-color: #1e1e1e;
-      color: #f4f4f4;
-    }
-    h1 {
-      margin-bottom: 10px;
-    }
-    #cat-img {
-      width: 250px;
-      margin: 20px 0;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    }
-    .btn {
-      padding: 12px 20px;
-      font-size: 18px;
-      margin: 10px;
-      cursor: pointer;
-      border: none;
-      border-radius: 8px;
-      background-color: #007bff;
+    .dark-mode {
+      background-color: #121212;
       color: white;
-      transition: transform 0.2s, background 0.3s;
     }
-    .btn:hover {
-      background-color: #0056b3;
-      transform: scale(1.05);
-    }
-    #superClickBtn {
-      display: none;
-      background-color: #28a745;
-    }
-    #superClickBtn:hover {
-      background-color: #1e7e34;
-    }
-    #score {
-      font-size: 24px;
+    img {
+      max-width: 300px;
       margin: 20px 0;
     }
-    #message, #cheatMsg, #introMsg {
-      margin-top: 15px;
-      font-size: 20px;
-      font-weight: bold;
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 18px;
+      border-radius: 12px;
+      cursor: pointer;
     }
-    #cheatMsg {
-      color: red;
+    #superClick {
+      display: none;
     }
-    #modeBtn {
-      background-color: #6c757d;
-    }
-    #modeBtn:hover {
-      background-color: #5a6268;
+    #secretImage {
+      display: none;
+      margin-top: 20px;
+      max-width: 350px;
     }
   </style>
 </head>
 <body>
-  <h1>😼 BatCat 😼</h1>
-  <p id="introMsg">⚡ À 1000 points il y a une surprise... 😼</p>
-  <img id="cat-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST-FhqYiimlUVGs65YV46QbXpM64_M8ZeOm_O1mBUrftBLhgMxyvoAIKIxc-4Vn5bB0b0&usqp=CAU" alt="Chat mignon">
-  
+  <h1>🐱 Jeu du Chat 🐱</h1>
+  <p id="intro">Atteins 1000 points pour une surprise 🎁</p>
+  <img src="https://placekitten.com/300/200" alt="Chat mignon">
   <p id="score">Score : 0</p>
-  <button id="clickBtn" class="btn">Jouer (+1)</button>
-  <button id="superClickBtn" class="btn">Super Click (+10)</button>
-  <button id="modeBtn" class="btn">🌙 Mode sombre</button>
-
+  <p id="bestScore">Meilleur score : 0</p>
+  <button id="clickBtn">Jouer (+1)</button>
+  <button id="superClick">Super Click (+10)</button>
+  <button id="darkModeBtn">Mode Sombre</button>
   <p id="message"></p>
-  <p id="cheatMsg"></p>
+  <img id="secretImage" src="https://louisdouet7-arch.github.io/helpbatcat/world-cat.png" alt="Le monde est un chat">
 
   <script>
     let score = 0;
+    let bestScore = localStorage.getItem("bestScore") || 0;
     let lastClickTime = 0;
-    let cheatDetected = false;
+    const minInterval = 120; // anti-auto-click (120ms)
 
     const scoreDisplay = document.getElementById("score");
+    const bestScoreDisplay = document.getElementById("bestScore");
     const message = document.getElementById("message");
-    const cheatMsg = document.getElementById("cheatMsg");
     const clickBtn = document.getElementById("clickBtn");
-    const superClickBtn = document.getElementById("superClickBtn");
-    const modeBtn = document.getElementById("modeBtn");
+    const superClickBtn = document.getElementById("superClick");
+    const secretImage = document.getElementById("secretImage");
+    const darkModeBtn = document.getElementById("darkModeBtn");
 
-    function updateScore(amount) {
-      if (cheatDetected) return;
+    bestScoreDisplay.textContent = "Meilleur score : " + bestScore;
 
+    clickBtn.addEventListener("click", () => handleClick(1));
+    superClickBtn.addEventListener("click", () => handleClick(10));
+    darkModeBtn.addEventListener("click", toggleDarkMode);
+
+    function handleClick(points) {
       let now = Date.now();
-      let delta = now - lastClickTime;
 
-      // anti auto-click seulement sur +1
-      if (amount === 1 && delta < 100 && lastClickTime !== 0) {
-        cheatDetected = true;
-        cheatMsg.textContent = "🚨 TRICHEUR ! Tu ne peux plus cliquer 😼";
+      // Détection auto-click
+      if (now - lastClickTime < minInterval) {
+        message.textContent = "🚨 Tricheur détecté !";
         clickBtn.disabled = true;
         superClickBtn.disabled = true;
         return;
       }
-
       lastClickTime = now;
-      score += amount;
+
+      // Ajout du score
+      score += points;
       scoreDisplay.textContent = "Score : " + score;
 
-      if (score === 50) {
-        message.textContent = "😼 Bravo, tu as perdu ton temps ! mais continue";
+      // Vérifie et met à jour le meilleur score
+      if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem("bestScore", bestScore);
+        bestScoreDisplay.textContent = "Meilleur score : " + bestScore;
       }
 
-      if (score >= 1000 && superClickBtn.style.display === "none") {
-        message.textContent = "🚀 Nouveau bouton débloqué : Super Click (+10) !";
+      // Messages spéciaux
+      if (score === 50) {
+        message.textContent = "🎉 Bravo, tu as perdu ton temps 😆 ! Clique encore plus...";
+      }
+      if (score === 500) {
+        secretImage.style.display = "block";
+        message.textContent = "🐱 Le monde est un chat !";
+      }
+      if (score >= 1000) {
         superClickBtn.style.display = "inline-block";
+        message.textContent = "🔥 Bravo ! Tu as débloqué le Super Click (+10) !";
       }
     }
 
-    clickBtn.addEventListener("click", () => updateScore(1));
-    superClickBtn.addEventListener("click", () => updateScore(10));
-
-    // Mode sombre
-    modeBtn.addEventListener("click", () => {
-      document.body.classList.toggle("dark");
-      if (document.body.classList.contains("dark")) {
-        modeBtn.textContent = "☀️ Mode clair";
-      } else {
-        modeBtn.textContent = "🌙 Mode sombre";
-      }
-    });
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+    }
   </script>
 </body>
 </html>
